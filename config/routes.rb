@@ -1,12 +1,15 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: { registrations: "users/registrations",  sessions: "users/sessions" }
-  resources :users
+  devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-  resources :events
-  resources :attendee_attended_events
-  resources :events_to_attend
+  resources :event, only: [ :index, :new, :create, :show ] do
+    member do
+      post "join", to: "attendance#create"
+      delete "leave", to: "attendance#delete"
+      delete "delete", to: "event#delete"
+    end
+  end
+  resources :user, only: :show
 
-  root to: "events#index"
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
@@ -16,5 +19,5 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  root "event#index"
 end
