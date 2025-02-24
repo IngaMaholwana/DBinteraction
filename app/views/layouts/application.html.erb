@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Database Interaction" %></title>
+    <title><%= content_for(:title) || "Private Events" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -19,10 +19,23 @@
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_include_tag 'rails-ujs' %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
+    <header>
+      <%= link_to "Home", root_path %>
+      <% if user_signed_in? %>
+        <%= link_to "New Event", new_event_path %>
+        <div class="divider"></div>
+        <%= link_to "Sign Out", destroy_user_session_path, method: :delete %>
+      <% else %>
+        <div class="divider"></div>
+        <%= link_to "Sign In", new_user_session_path %>
+        <%= link_to "Sign Up", new_user_registration_path %>
+      <% end %>
+    </header>
     <%= yield %>
   </body>
 </html>

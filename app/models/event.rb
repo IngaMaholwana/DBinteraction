@@ -1,9 +1,6 @@
 class Event < ApplicationRecord
-  belongs_to :event_creator, class_name: "User"
+  belongs_to :author, class_name: "User", foreign_key: "author_id"
 
-  has_many :attendee_attended_events, foreign_key: :attended_event_id
-  has_many :attendees, through: :events_to_attend, source: :attendee
-
-  scope :past, -> { where(event_date: ..(Time.now.midnight)) }
-  scope :future, -> { where(event_date: (Time.now.midnight)..) }
+  has_many :attendances, dependent: :destroy
+  has_many :attendants, through: :attendances, source: :user
 end

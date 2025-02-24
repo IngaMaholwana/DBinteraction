@@ -1,0 +1,6 @@
+<h1><%= @user.email %>'s Events!</h1>
+<% @events = @user.events %>
+<%= render "event/events", events: @events %>
+<h1><%= @user.email %> is attending</h1>
+<% @events = @user.attended_events %>
+<%= render "event/events", event: @events %>
