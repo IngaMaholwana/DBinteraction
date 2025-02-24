@@ -1,0 +1,21 @@
+<h1><%= @event.title %></h1>
+<h3>Date: <%= @event.date %></h3>
+<h3>Place: <%= @event.place %></h3>
+<h3>Author: <%= link_to @event.author.email, user_path(@event.author.id) %></h3>
+<h5>Attendants:
+    <% @event.attendants.each_with_index do |user, i| %>
+        <% if i > 0 %>, <% end %>
+        <%= user.email %>
+    <% end %>
+    <% if @event.attendants.empty? %> None <% end %>
+</h5>
+<% if user_signed_in? && @event.author != current_user %>
+    <% unless @event.attendants.include?(current_user) %>
+        <%= button_to "Join", join_event_path(@event), method: :post %>
+    <% else %>
+        <%= button_to "Leave", leave_event_path(@event), method: :delete %>
+    <% end %>
+<% end %>
+<% if @event.author == current_user %>
+    <%= button_to "REMOVE", delete_event_path(@event), method: :delete %>
+<% end %>
