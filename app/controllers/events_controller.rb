@@ -1,30 +1,39 @@
-class EventsController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :create]
-
+class EventController < ApplicationController
+  before_action :authenticate_user!, only: [ :new, :create ]
   def index
     @events = Event.all
   end
 
-  def show
-    @event = Event.find(params[:id])
-  end
-
   def new
-    @event = current_user.created_events.build
+    @event = Event.new
   end
 
   def create
-    @event = current_user.created_events.build(event_params)
+    @event = current_user.events.build(event_params)
     if @event.save
-      redirect_to @event, notice: "Event successfully created!"
+      redirect_to event_index_path
     else
+      puts @event.errors.full_messages
       render :new, status: :unprocessable_entity
     end
   end
 
+  def show
+    @event = Event.find_by(id: params[:id])
+  end
+
+  def delete
+    @event = Event.find_by(id: params[:id])
+    if current_user == @event.author && @event.delete
+      redirect_to event_index_path
+    else
+      puts @event.errors.full_messages
+      render :show, status: :unprocessable_entity
+    end
+  end
   private
 
   def event_params
-    params.require(:event).permit(:title, :location, :date)
+    params.expect(event: [ :title, :date, :place ])
   end
 end
